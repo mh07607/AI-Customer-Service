@@ -33,15 +33,12 @@ def chat_with_ai():
     ):
         ai_audio_data = chunk.candidates[0].content.parts[0].inline_data.data
         play_audio(ai_audio_data)
-
-    return
-        
         
     
     # Play the AI's greeting
-    print(f"AI: {response.text}")
-    ai_audio_data = audio_response.candidates[0].content.parts[0].inline_data.data
-    play_audio(ai_audio_data)
+    # print(f"AI: {response.text}")
+    # ai_audio_data = audio_response.candidates[0].content.parts[0].inline_data.data
+    # play_audio(ai_audio_data)
     
     # Main conversation loop
     while True:
@@ -60,8 +57,7 @@ def chat_with_ai():
         
         print(f"AI: {response.text}")
         
-        # Get AI audio response
-        audio_response = client.models.generate_content(
+        for chunk in client.models.generate_content_stream(
             model="gemini-2.5-flash-preview-tts",
             contents=response.text,
             config=types.GenerateContentConfig(
@@ -74,12 +70,9 @@ def chat_with_ai():
                     )
                 ),
             )
-        )
-        
-        # Play the AI's response
-        ai_audio_data = audio_response.candidates[0].content.parts[0].inline_data.data
-        play_audio(ai_audio_data)        
-
+        ):
+            ai_audio_data = chunk.candidates[0].content.parts[0].inline_data.data
+            play_audio(ai_audio_data)
 # Run the conversation system
 if __name__ == "__main__":
     chat_with_ai()
