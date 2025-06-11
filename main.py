@@ -17,7 +17,7 @@ def chat_with_ai():
     )
     
     # Get audio for the initial greeting
-    audio_response = client.models.generate_content(
+    for chunk in client.models.generate_content_stream(
         model="gemini-2.5-flash-preview-tts",
         contents=response.text,
         config=types.GenerateContentConfig(
@@ -30,7 +30,13 @@ def chat_with_ai():
                 )
             ),
         )
-    )
+    ):
+        ai_audio_data = chunk.candidates[0].content.parts[0].inline_data.data
+        play_audio(ai_audio_data)
+
+    return
+        
+        
     
     # Play the AI's greeting
     print(f"AI: {response.text}")
